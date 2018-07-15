@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>CustomField.qml</file>
+        <file>../../../../Галерея/Изображение/Art/look.com.ua_109898.jpg</file>
+    </qresource>
+</RCC>

@@ -23,7 +23,14 @@ AppController::AppController(QObject *parent) : QObject(parent), m_myModel(new P
    // m_list.append("test 2 sdfsdgdfg");
    // m_list.append("/home/mike/testmg1.jpg");
     m_list=m_myModel->list();
+  //  fsmodel->setRootPath(QDir::currentPath());
    // m_myModel->addElement("/home/mike/testmg1.jpg");
+}
+
+QString AppController::itemAt(int index)
+{
+    return m_list.at(index);
+
 }
 
 AppController::~AppController()
@@ -39,6 +46,11 @@ PathViewModel *AppController::myModel() const
 QStringList AppController::list() const
 {
     return m_list;
+}
+
+int AppController::getCount()
+{
+    return m_list.count();
 }
 
 void AppController::setMyModel(PathViewModel *myModel)

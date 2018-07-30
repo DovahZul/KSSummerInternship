@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <pathviewmodel.h>
+#include <QtWidgets/QFileSystemModel>
 
 class AppController : public QObject
 {
@@ -13,6 +14,9 @@ class AppController : public QObject
 
 
 public:
+
+  //  QFileSystemModel *fsmodel = new QFileSystemModel;
+
 
     Q_PROPERTY(QStringList list READ list WRITE setList NOTIFY listChanged)
 
@@ -31,11 +35,13 @@ public:
     PathViewModel* myModel() const;
     QStringList list() const;
 
+
 public slots:
     void setMyModel(PathViewModel* myModel);
     void setList(QStringList list);
     bool setDirectory(QString path);
-
+    QString itemAt(int index);
+    int getCount();
 signals:
     void myModelChanged(PathViewModel* myModel);
     void listChanged(QStringList list);

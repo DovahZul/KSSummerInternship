@@ -5,12 +5,12 @@
 
 PathViewModel::PathViewModel(QObject *parent)
 {
-    /*
+/*
     m_data.append("file:///home/mike/testImg1.jpg");
     m_data.append("file:///home/mike/testImg2.jpg");
     m_data.append("file:///home/mike/testImg1.jpg");
     m_data.append("file:///home/mike/testImg2.jpg");
-    */
+*/
     setFolder("/media/mike/Archive/Галерея/Изображение/Art/scr/");
 }
 
@@ -26,7 +26,7 @@ QStringList PathViewModel::list()
 void PathViewModel::setFolder(QString path)
 {
     QDir directory(path);
-    QStringList images = directory.entryList();
+    QStringList images = directory.entryList(QDir::Files);
     foreach(QString temp, images)
     {
         m_data.append(path+temp);

@@ -1,199 +1,414 @@
 import QtQuick 2.9
 import QtQuick.Window 2.2
-import QtQuick.Controls 2.2
+import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.3
+import QtQml.Models 2.2
+import Qt.labs.folderlistmodel 2.2
+import QtQuick.Controls.Styles 1.4
+//import io.qt.examples.quick.controls.filesystembrowser 1.0
 //import my.model 1.0
 
-Window {
+ApplicationWindow {
+    id:mainWindow
     visible: true
     width: 640
     height: 480
     title: qsTr("Hello World")
 
-    PathView
+
+    menuBar: MenuBar {
+        Menu {
+            title: qsTr("File")
+            MenuItem {
+                text: qsTr("Exit")
+                onTriggered: Qt.quit();
+            }
+        }
+    }
+
+/*
+    ColumnLayout
     {
-
-        id: scroller
-        z: 1
+        id: mainColumn
+        property real globalPadding: 10
         anchors.fill: parent
-        pathItemCount: 3
-        model: controller.list
+        spacing: 5
 
-        Component.onCompleted: {
-            console.log("loaded");
-            controller.setDirectory("file:///media/mike/Archive/Галерея/Изображение/Art/am");
-            console.log(controller.list);
-        }
-
-        path: Path
+        anchors.margins: globalPadding;
+*/
+        Row
         {
+            Layout.alignment: Qt.AlignTop
+            id: rowDirectorySelection
+            height: 30
+            anchors.top: parent.left
+            anchors.right: parent.right
+            spacing: 5
+            Layout.margins: 10
 
-            startX: 45
-            startY: 242
-
-            PathCubic {
-                x: 292.608
-                y: 246.792
-                control2Y: 246.2
-                control1Y: 260
-                control2X: 190.88
-                control1X: 127.2
-            }
-
-            PathCubic {
-                x: 620
-                y: 215
-                control2Y: 265.038
-                control1Y: 251.754
-                control2X: 503.082
-                control1X: 384.526
-            }
-        }
-
-        delegate: Rectangle
-        {
-            id: delegateImage
-            state: "normal"
-
-            width: 300
-            height: 300
-            ColumnLayout
+            Rectangle
             {
+                border.color: "gray"
+                border.width: 10
                 anchors.fill: parent
+            }
+
+
+            Text
+            {
+                id: directoryLabel
+                anchors.right: parent.left
+                text:"Directory: "
+                anchors.margins: globalPadding
+            }
+            TextField
+            {              
+                anchors.margins: globalPadding
+                width: parent.width - (directoryLabel.width + directoryBrowseButton.width)
+            }
+
+            Button
+            {
+                id: directoryBrowseButton
+               // anchors.right: parent.right
+                text: "Browse.."
+              //  anchors.margins: globalPadding
+
+            }
+            Button
+            {
+                id: directoryProceedButton
+               // anchors.right: parent.right
+                text: "Go"
+              //  anchors.margins: globalPadding
+
+            }
+        }
+
+
+        Row
+        {
+            id: mainView
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            //  Layout.fillWidth: true
+            anchors.top: rowDirectorySelection.bottom
+            anchors.bottom: rowScroller.top
+           // Layout.preferredHeight: 400
+            //Layout.alignment: Qt.AlignVCenter
+            spacing: 5
+            Layout.margins: 10
+            //height: 200 // - rowDirectorySelection.height - rowScroller.height
+
+            Rectangle
+            {
+                id: prevButton
+                color: "transparent"
+                width: 30
+                height: parent.height
+
 
                 Image
                 {
                     anchors.fill: parent
-                    width:100
-                    height:100
-                    source: modelData
                     fillMode: Image.PreserveAspectFit
+                    source: "icon-pointer-left"
+
                 }
-                Text
+            }
+
+
+            Rectangle
+            {
+               // Layout.alignment: Qt.AlignCenter
+                color: "transparent"
+                border.color: "black"
+                border.width: 10
+                //anchors.fill: parent
+                height: parent.height
+               // width: mainWindow.width
+                Layout.fillWidth: true
+
+
+
+                Image
                 {
-                    text: modelData
+                    anchors.fill: parent
+                    anchors.centerIn: parent
+                    id: mainImage
+                    fillMode: Image.PreserveAspectFit
+                    source: "testimg"
                 }
             }
-         }
-    }
 
 
+            Rectangle
+            {
 
-
-
-}
-/*
-    ListView {
-        anchors.fill: parent
-        model: controller.myModel
-
-        move: Transition { //parallel animations by default
-            NumberAnimation { properties: "x,y"; duration: 250}
-            NumberAnimation { properties: "scale"; to: 1.0; duration: 250}
-            NumberAnimation { properties: "opacity"; to: 1.0; duration: 250}
-        }
-
-        moveDisplaced: Transition {
-            NumberAnimation { properties: "x,y"; duration: 250}
-        }
-
-        add: Transition {
-            NumberAnimation { properties: "opacity"; from: 0.0; to: 1.0; duration: 500 }
-            SequentialAnimation {
-                NumberAnimation { properties: "scale"; from: 0.0; to: 2.0; duration: 250; easing.type: Easing.InOutQuad }
-                NumberAnimation { properties: "scale"; to: 1.0; duration: 250; easing.type: Easing.InOutQuad }
+                id: nextButton
+                color: "transparent"
+                width: 30
+                height: parent.height
+                Image
+                {
+                    anchors.fill: parent
+                    fillMode: Image.PreserveAspectFit
+                    source: "icon-pointer-right"
+                }
             }
+
+
+
         }
 
-        delegate: Rectangle {
-            id: itemDelegate
 
-            z:0
-            ListView.onRemove://delegate's custom animation, before it remove
-            SequentialAnimation {
+        Row
+        {
+            id: rowScroller
+            //height: 30
+            anchors.bottom: mainWindow.bottom
+           // anchors.top: mainView.bottom
 
-                PropertyAction { target: itemDelegate; property: "ListView.delayRemove"; value: true } // don't remove item on the spot
 
-                ParallelAnimation {
-                    NumberAnimation { target: itemDelegate;  properties: "opacity"; from: 1.0; to: 0.0; duration: 500 }
-                    SequentialAnimation {
-                        NumberAnimation { target: itemDelegate;  properties: "scale"; from: 1.0; to: 2.0; duration: 250 }
-                        NumberAnimation {  target: itemDelegate; properties: "scale"; to: 0.0; duration: 250 }
+        PathView
+        {
+
+            height: 30
+            id: scroller
+            z: 1
+            pathItemCount: 5
+            model: controller.list
+
+            Component.onCompleted: {
+                console.log("loaded");
+                // controller.setDirectory("file:///media/mike/Archive/Галерея/Изображение/Art/am");
+                console.log(controller.list);
+                mainImage.source = scroller.childAt(0)
+            }
+
+
+
+            Binding
+            {
+                target: mySlider
+                property: "value"
+                value: scroller.currentIndex
+                when: scroller.moving
+            }
+
+
+
+
+
+            path: Path
+            {
+
+                startX: 24
+                startY: 53
+
+                PathCubic {
+                    x: 271.608
+                    y: 57.792
+                    control2Y: 57.2
+                    control1Y: 71
+                    control2X: 169.88
+                    control1X: 106.2
+                }
+
+                PathCubic {
+                    x: 599
+                    y: 26
+                    control2Y: 76.038
+                    control1Y: 62.754
+                    control2X: 482.082
+                    control1X: 363.526
+                }
+            }
+
+            delegate: Rectangle
+            {
+                id: delegateImage
+                state: "normal"
+            //      visible: scroller.onPath == false
+             //   width: 60
+             //   height: 60
+             //   radius: 10
+                color: "transparent"
+                border.color: "gray"
+                border.width: 1
+
+                ScaleAnimator {
+                    target: delegateImage;
+                    from: 0.5;
+                    to: 1;
+                    duration: 100
+                    running: true
+                }
+
+                ColumnLayout
+                {
+                    anchors.fill: parent
+
+                    Image
+                    {
+                        id: miniature
+                        anchors.fill: parent
+                       // width:80
+                     //   height:80
+
+                        source:  "image://async/"+modelData
+                        fillMode: Image.PreserveAspectFit
+                        mipmap: true
+                        smooth: false
+                        state: "normal"
+
+
+
+
+                        states: [
+                        State
+                            {
+                                name: "normal"
+                                when: miniatureArea.containsMouse == false
+                                PropertyChanges
+                                {
+                                    target: delegateImage
+                                    //color: "gray"
+                                    //visible: false
+                                   // opacity: 0
+                                    width:80
+                                    height:80
+                                }
+
+                            },
+                        State
+                            {
+                                name: "hovered"
+                                when:  miniatureArea.containsMouse == true
+                                PropertyChanges
+                                {
+                                    target: delegateImage
+                                   // color: "red"
+                                    //visible: true;
+                                   // opacity: 1
+                                    width:125
+                                    height:125
+                                }
+
+                            }
+                        ]
+                        transitions: [
+                            Transition {
+                                from: "hovered"
+                                to: "normal"
+                                NumberAnimation
+                                {
+                                    target: delegateImage
+                                    properties: "width, height"
+                                    duration: 60
+                                }
+                            },
+                            Transition {
+                                from: "normal"
+                                to: "hovered"
+                                NumberAnimation
+                                {
+                                    target: delegateImage
+                                    properties:  "width, height"
+                                    duration: 60
+                                }
+
+                            }
+                        ]
+
+
+
+                        MouseArea{
+
+                           id: miniatureArea
+                           anchors.fill: parent
+                           hoverEnabled: true;
+                           onWheel:
+                                {
+                                   if( wheel.angleDelta.y > 0 ) scroller.incrementCurrentIndex();
+                                   else scroller.decrementCurrentIndex();
+                                }
+                           onClicked:
+                               {
+                                   mainImage.source = "file://"+modelData
+                               }
+
+                        }
+
+
+                    }
+                    Text
+                    {
+                        text: modelData
                     }
                 }
-
-                PropertyAction { target: itemDelegate; property: "ListView.delayRemove"; value: false } // ok, can remove it
             }
+        }
 
+
+        }
+        Slider {
+           // anchors.centerIn: parent
+            id: mySlider
+
+            style: SliderStyle {
+                groove: Rectangle {
+                    implicitWidth: 200
+                    implicitHeight: 8
+                    color: "gray"
+                    radius: 8
+                }
+                handle: Rectangle {
+                    anchors.centerIn: parent
+                    color: control.pressed ? "white" : "lightgray"
+                    border.color: "gray"
+                    border.width: 2
+                    implicitWidth: 20
+                    implicitHeight: 20
+                    radius: 20
+                }
+            }
             anchors.left: parent.left
-            anchors.right: parent.right
-            height: titleLabel.implicitHeight
-
-            gradient: Gradient {
-                GradientStop {
-                    position: 0.00;
-                    color: "#ffffff";
-                }
-                GradientStop {
-                    position: 0.87;
-                    color: "#bdc8ec";
-                }
-                GradientStop {
-                    position: 1.00;
-                    color: "#ffffff";
-                }
+            anchors.right:parent.right
+            anchors.bottom: parent.bottom
+            minimumValue: 0
+            maximumValue: controller.getCount()
+            stepSize: 1
+            Binding
+            {
+                target: scroller
+                property: "currentIndex"
+                value: mySlider.value
+                when: mySlider.pressed
             }
-            border.color: "grey"
 
-            Text {
-                id: titleLabel
-                text: mText
-                anchors.fill: parent
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-
-
-                Component.onCompleted: {
-                    console.log("loaded");
-                }
-            }
+        Component.onCompleted:
+        {
+            console.log("COUNT:"+controller.getCount())
+        }
         }
 
-    }
 
 
-    Timer {
-        id:timer1
-        interval: 1500
-        repeat: true
-        running: true
-        onTriggered: {
-            var number = Math.round(Math.random()*100);
-            controller.addElement("from qml %1".arg(number));
+
+    ///////////////////////////////////}
+
+
+    statusBar: StatusBar {
+        RowLayout {
+            anchors.fill: parent
+            Label {text: mainWindow.height - rowDirectorySelection.height - rowScroller.height}
+            //{ text:scroller.itemAt(1) }// { text: "Current idex: "+scroller.currentIndex+" of "+ controller.getCount() }
+          //  Label { text:scroller.childAt(0) }
         }
     }
 
-    Timer {
-        id:timer2
-        interval: 2000
-        repeat: true
-        running: true
-        onTriggered: {
-            controller.deleteElement(Math.random()*count);
-        }
-    }
 
-    Timer {
-        id:timer3
-        interval: 1000
-        repeat: true
-        running: true
-        onTriggered: {
-            var count = controller.myModel.rowCount();
-            var from = Math.random()*count;
-            var to = Math.random()*count;
-            controller.moveElement(from, to);
-        }
-    }
+
+
 }
-*/

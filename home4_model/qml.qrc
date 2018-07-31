@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>Triangle.qml</file>
-        <file>Slider.qml</file>
         <file>appcontroller.cpp</file>
         <file>appcontroller.h</file>
         <file>asyncimageprovider.cpp</file>

@@ -25,10 +25,12 @@ public:
     void moveElement(int from, int to);
     QString elementAt(int index);
     QStringList list();
-    void setFolder(QString path);
+    void setFolderPath(QString path);
+    QString getFolderPath();
 
 private:
    QList<QString> m_data;
+   QString folderPath;
 };
 
 #endif // PATHVIEWMODEL_H

@@ -18,6 +18,11 @@ ApplicationWindow {
 
 property real globalPadding: 10
 
+    Component.onCompleted:
+    {
+        textFieldDirectory.text = controller.getDirectoryPath()
+    }
+
     menuBar: MenuBar {
         Menu {
             title: qsTr("File")
@@ -70,6 +75,7 @@ property real globalPadding: 10
                 anchors.margins: globalPadding
                 width: parent.width - (directoryLabel.width + directoryBrowseButton.width)
                 Layout.fillWidth: true
+
 
             }
 
@@ -243,6 +249,7 @@ property real globalPadding: 10
             model: controller.list
 
             Component.onCompleted: {
+
                 console.log("loaded");
                 // controller.setDirectory("file:///media/mike/Archive/Галерея/Изображение/Art/am");
                 console.log(controller.list);
@@ -256,7 +263,16 @@ property real globalPadding: 10
                 target: mySlider
                 property: "value"
                 value: scroller.currentIndex
-                when: scroller.moving
+                when: true//scroller.moving || mySlider.pressed
+            }
+
+            Binding
+            {
+                target: scroller
+                property: "currentIndex"
+                value: Slider.value
+                when: mySlider.onWheel
+
             }
 
 
@@ -266,19 +282,44 @@ property real globalPadding: 10
             path: Path
             {
 
-                startX: 13
+                startX: 12
                 startY: 31
 
-
+                PathCubic {
+                    x: 259.608
+                    y: 35.792
+                    control2Y: 35.2
+                    control1Y: 49
+                    control2X: 157.88
+                    control1X: 94.2
+                }
 
                 PathCubic {
-                    x: mainWindow.width
-                    y: 31
-                    control2X: mainWindow.width
-                    control1X: 195.4
-                    control1Y: 12
-                    control2Y: 40
+                    x: 608
+                    y: 25
+                    control2Y: 60.038
+                    control1Y: 40.754
+                    control2X: 479.082
+                    control1X: 351.526
                 }
+
+
+            }
+            MouseArea{
+
+               id: scrollerarea
+               anchors.fill: parent
+              // hoverEnabled: true;
+               onWheel:
+                    {
+                       if( wheel.angleDelta.y > 0 ) scroller.incrementCurrentIndex();
+                       else scroller.decrementCurrentIndex();
+                    }
+               onClicked:
+                   {
+                       mainImage.source = "file://"+modelData
+                   }
+
             }
 
             delegate: Rectangle
@@ -297,7 +338,7 @@ property real globalPadding: 10
                     target: delegateImage;
                     from: 0.5;
                     to: 1;
-                    duration: 100
+                    duration: 150
                     running: true
                 }
 
@@ -378,7 +419,6 @@ property real globalPadding: 10
                         ]
 
 
-
                         MouseArea{
 
                            id: miniatureArea
@@ -397,6 +437,7 @@ property real globalPadding: 10
                         }
 
 
+
                     }
                     Text
                     {
@@ -411,7 +452,7 @@ property real globalPadding: 10
         Slider
         {
             id: mySlider
-
+            wheelEnabled: false
             anchors.left: parent.left
             anchors.right:parent.right
             anchors.bottom: parent.bottom
@@ -438,13 +479,21 @@ property real globalPadding: 10
                     radius: 20
                 }
             }
+            /*
+            MouseArea
+            {
+                id: sliderArea
+                anchors.fill: parent
+                hoverEnabled: true
+
+            }*/
 
             Binding
             {
                 target: scroller
                 property: "currentIndex"
                 value: mySlider.value
-                when: mySlider.pressed
+                when: mySlider.pressed //|| sliderArea.containsMouse
             }
 
         Component.onCompleted:

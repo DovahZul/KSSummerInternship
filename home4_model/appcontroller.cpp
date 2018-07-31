@@ -12,16 +12,24 @@ void AppController::moveElement(int from, int to)
 void AppController::deleteElement(int index) {
     m_myModel->deleteElement(index);
 }
-bool AppController::setDirectory(QString path)
+bool AppController::setDirectoryPath(QString path)
 {
-    m_myModel->setFolder(path);
+    m_myModel->setFolderPath(path);
     m_list=m_myModel->list();
     emit myModelChanged(m_myModel);
     emit listChanged(m_list);
     return true;
 }
+
+QString AppController::getDirectoryPath()
+{
+  //  return "stub from controller";
+    return m_myModel->getFolderPath();
+}
+
 AppController::AppController(QObject *parent) : QObject(parent), m_myModel(new PathViewModel())
 {
+    m_myModel->setFolderPath("/media/mike/Archive/Галерея/Изображение/Art/scr/");
   //  m_list.append("test 1 gfdgdfg");
    // m_list.append("test 2 sdfsdgdfg");
    // m_list.append("/home/mike/testmg1.jpg");

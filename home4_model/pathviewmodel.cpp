@@ -11,7 +11,7 @@ PathViewModel::PathViewModel(QObject *parent)
     m_data.append("file:///home/mike/testImg1.jpg");
     m_data.append("file:///home/mike/testImg2.jpg");
 */
-    setFolder("/media/mike/Archive/Галерея/Изображение/Art/scr/");
+   // setFolderPath("/media/mike/Archive/Галерея/Изображение/Art/scr/");
 }
 
 int PathViewModel::rowCount(const QModelIndex &parent) const
@@ -23,17 +23,22 @@ QStringList PathViewModel::list()
     return (QStringList)m_data;
 }
 
-void PathViewModel::setFolder(QString path)
+void PathViewModel::setFolderPath(QString path)
 {
-
+    folderPath = path;
     m_data.clear();
-    QDir directory(path);
+    QDir directory(folderPath);
     QStringList images = directory.entryList(QStringList() << "*.jpg" << "*.JPG"<<"*.png"<<"*.PNG"<<"*.jpeg"<<"*.JPEG",QDir::Files);
     foreach(QString temp, images)
     {
-        addElement(path+temp);
+        addElement(folderPath+temp);
         qDebug() << "qwe"+temp;
     }
+}
+QString PathViewModel::getFolderPath()
+{
+   // return "stub from PathViewModel";
+    return folderPath;
 }
 QVariant PathViewModel::data(const QModelIndex &index, int role) const
 {

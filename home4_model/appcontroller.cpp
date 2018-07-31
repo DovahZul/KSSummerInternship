@@ -15,6 +15,9 @@ void AppController::deleteElement(int index) {
 bool AppController::setDirectory(QString path)
 {
     m_myModel->setFolder(path);
+    m_list=m_myModel->list();
+    emit myModelChanged(m_myModel);
+    emit listChanged(m_list);
     return true;
 }
 AppController::AppController(QObject *parent) : QObject(parent), m_myModel(new PathViewModel())

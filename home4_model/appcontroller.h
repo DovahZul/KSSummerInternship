@@ -39,7 +39,7 @@ public:
 public slots:
     void setMyModel(PathViewModel* myModel);
     void setList(QStringList list);
-    bool setDirectory(QString path);
+    Q_INVOKABLE bool setDirectory(QString path);
     QString itemAt(int index);
     int getCount();
 signals:

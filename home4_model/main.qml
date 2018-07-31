@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.3
 import QtQml.Models 2.2
 import Qt.labs.folderlistmodel 2.2
 import QtQuick.Controls.Styles 1.4
+import QtQuick.Dialogs 1.2
 //import io.qt.examples.quick.controls.filesystembrowser 1.0
 //import my.model 1.0
 
@@ -15,6 +16,7 @@ ApplicationWindow {
     height: 480
     title: qsTr("Hello World")
 
+property real globalPadding: 10
 
     menuBar: MenuBar {
         Menu {
@@ -26,45 +28,49 @@ ApplicationWindow {
         }
     }
 
-/*
+
     ColumnLayout
     {
         id: mainColumn
-        property real globalPadding: 10
+
         anchors.fill: parent
-        spacing: 5
+        spacing: 20
 
         anchors.margins: globalPadding;
-*/
-        Row
+
+        RowLayout
         {
-            Layout.alignment: Qt.AlignTop
             id: rowDirectorySelection
             height: 30
-            anchors.top: parent.left
+           // width: parent.width
+            anchors.left: parent.left
             anchors.right: parent.right
-            spacing: 5
-            Layout.margins: 10
-
+            spacing: 10
+            //Layout.margins: 10
+/*
             Rectangle
             {
                 border.color: "gray"
                 border.width: 10
                 anchors.fill: parent
             }
-
+*/
 
             Text
             {
                 id: directoryLabel
-                anchors.right: parent.left
+              //  anchors.right: parent.left
                 text:"Directory: "
                 anchors.margins: globalPadding
             }
             TextField
-            {              
+            {
+                id: textFieldDirectory
+
                 anchors.margins: globalPadding
                 width: parent.width - (directoryLabel.width + directoryBrowseButton.width)
+                Layout.fillWidth: true
+
             }
 
             Button
@@ -73,29 +79,67 @@ ApplicationWindow {
                // anchors.right: parent.right
                 text: "Browse.."
               //  anchors.margins: globalPadding
+                onClicked:
+                {
+                    fileDialog.open();
+                }
+
 
             }
+
+
+            FileDialog {
+                 id: fileDialog
+                 title: "Please choose a Path to Source"
+                 folder: shortcuts.home
+                 selectFolder: true
+                 onAccepted:
+                 {
+                     /*
+                     console.log("Accepted: " + fileDialog.fileUrls);
+                     for (var i = 0; i < fileDialog.fileUrls.length; ++i)
+                         textFieldDirectory.text = fileDialog.folder.replace(/^(file:\/{3})/,"");
+                         */
+                      var path = fileDialog.fileUrl.toString();
+                      // remove prefixed "file:///"
+                      path = path.replace(/^(file:\/{2})/,"");
+                      // unescape html codes like '%23' for '#'
+                      textFieldDirectory.text = path + "/" //decodeURIComponent(path);
+                      controller.setDirectory(textFieldDirectory.text)
+                      console.log(textFieldDirectory.text)
+                      mainImage.source = "file://"+controller.itemAt(0)
+
+                 }
+             }
+
             Button
             {
                 id: directoryProceedButton
                // anchors.right: parent.right
                 text: "Go"
               //  anchors.margins: globalPadding
+                onClicked:
+                {
+                    controller.setDirectory(textFieldDirectory.text)
+                    console.log(textFieldDirectory.text)
+                    mainImage.source = "file://"+controller.itemAt(0)
+                   // scroller.model = controller.list
+                }
 
             }
         }
 
 
-        Row
+        RowLayout
         {
             id: mainView
             Layout.fillHeight: true
             Layout.fillWidth: true
+            Layout.alignment: Qt.AlignVCenter
             //  Layout.fillWidth: true
             anchors.top: rowDirectorySelection.bottom
             anchors.bottom: rowScroller.top
-           // Layout.preferredHeight: 400
-            //Layout.alignment: Qt.AlignVCenter
+            anchors.margins: globalPadding;
             spacing: 5
             Layout.margins: 10
             //height: 200 // - rowDirectorySelection.height - rowScroller.height
@@ -104,6 +148,7 @@ ApplicationWindow {
             {
                 id: prevButton
                 color: "transparent"
+                Layout.fillHeight: true
                 width: 30
                 height: parent.height
 
@@ -115,6 +160,11 @@ ApplicationWindow {
                     source: "icon-pointer-left"
 
                 }
+                MouseArea
+                {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                }
             }
 
 
@@ -122,12 +172,17 @@ ApplicationWindow {
             {
                // Layout.alignment: Qt.AlignCenter
                 color: "transparent"
-                border.color: "black"
-                border.width: 10
-                //anchors.fill: parent
+                Layout.fillHeight: true
+                antialiasing: false
+
+              //  border.color: "black"
+                //border.width: 10
+
+                anchors.fill: parent
                 height: parent.height
                // width: mainWindow.width
                 Layout.fillWidth: true
+                Layout.margins: globalPadding
 
 
 
@@ -147,6 +202,7 @@ ApplicationWindow {
 
                 id: nextButton
                 color: "transparent"
+                Layout.fillHeight: true
                 width: 30
                 height: parent.height
                 Image
@@ -162,28 +218,35 @@ ApplicationWindow {
         }
 
 
-        Row
+        RowLayout
         {
             id: rowScroller
             //height: 30
-            anchors.bottom: mainWindow.bottom
+            anchors.bottom: mySlider.top
+            anchors.left: parent.left
+            anchors.right: parent.right
            // anchors.top: mainView.bottom
+            Layout.margins: globalPadding
 
 
         PathView
         {
-
+            anchors.fill: parent
+            width: parent.width
             height: 30
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            highlightRangeMode: PathView.ApplyRange
             id: scroller
             z: 1
-            pathItemCount: 5
+            pathItemCount: 7
             model: controller.list
 
             Component.onCompleted: {
                 console.log("loaded");
                 // controller.setDirectory("file:///media/mike/Archive/Галерея/Изображение/Art/am");
                 console.log(controller.list);
-                mainImage.source = scroller.childAt(0)
+                mainImage.source = "file://"+controller.itemAt(0)
             }
 
 
@@ -203,25 +266,18 @@ ApplicationWindow {
             path: Path
             {
 
-                startX: 24
-                startY: 53
+                startX: 13
+                startY: 31
+
+
 
                 PathCubic {
-                    x: 271.608
-                    y: 57.792
-                    control2Y: 57.2
-                    control1Y: 71
-                    control2X: 169.88
-                    control1X: 106.2
-                }
-
-                PathCubic {
-                    x: 599
-                    y: 26
-                    control2Y: 76.038
-                    control1Y: 62.754
-                    control2X: 482.082
-                    control1X: 363.526
+                    x: mainWindow.width
+                    y: 31
+                    control2X: mainWindow.width
+                    control1X: 195.4
+                    control1Y: 12
+                    control2Y: 40
                 }
             }
 
@@ -352,9 +408,18 @@ ApplicationWindow {
 
 
         }
-        Slider {
-           // anchors.centerIn: parent
+        Slider
+        {
             id: mySlider
+
+            anchors.left: parent.left
+            anchors.right:parent.right
+            anchors.bottom: parent.bottom
+            minimumValue: 0
+            maximumValue: controller.getCount()
+            stepSize: 1
+
+
 
             style: SliderStyle {
                 groove: Rectangle {
@@ -373,12 +438,7 @@ ApplicationWindow {
                     radius: 20
                 }
             }
-            anchors.left: parent.left
-            anchors.right:parent.right
-            anchors.bottom: parent.bottom
-            minimumValue: 0
-            maximumValue: controller.getCount()
-            stepSize: 1
+
             Binding
             {
                 target: scroller
@@ -396,13 +456,13 @@ ApplicationWindow {
 
 
 
-    ///////////////////////////////////}
+    }
 
 
     statusBar: StatusBar {
         RowLayout {
             anchors.fill: parent
-            Label {text: mainWindow.height - rowDirectorySelection.height - rowScroller.height}
+            Label  { text: "Current idex: "+scroller.currentIndex+" of "+ controller.getCount() }
             //{ text:scroller.itemAt(1) }// { text: "Current idex: "+scroller.currentIndex+" of "+ controller.getCount() }
           //  Label { text:scroller.childAt(0) }
         }

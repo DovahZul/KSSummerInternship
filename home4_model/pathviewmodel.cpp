@@ -25,11 +25,13 @@ QStringList PathViewModel::list()
 
 void PathViewModel::setFolder(QString path)
 {
+
+    m_data.clear();
     QDir directory(path);
-    QStringList images = directory.entryList(QDir::Files);
+    QStringList images = directory.entryList(QStringList() << "*.jpg" << "*.JPG"<<"*.png"<<"*.PNG"<<"*.jpeg"<<"*.JPEG",QDir::Files);
     foreach(QString temp, images)
     {
-        m_data.append(path+temp);
+        addElement(path+temp);
         qDebug() << "qwe"+temp;
     }
 }

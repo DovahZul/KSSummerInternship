@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>Triangle.qml</file>
+        <file>appcontroller.cpp</file>
+        <file>appcontroller.h</file>
+        <file>asyncimageprovider.cpp</file>
+        <file>asyncimageprovider.h</file>
+        <file>main.cpp</file>
+        <file>pathviewmodel.cpp</file>
+        <file>pathviewmodel.h</file>
+        <file alias="icon-pointer-left">icons/shevron-left.png</file>
+        <file alias="icon-pointer-right">icons/shevron-right.png</file>
+        <file alias="testimg">testImg1.jpg</file>
+        <file>DirBrowser.qml</file>
+    </qresource>
+</RCC>

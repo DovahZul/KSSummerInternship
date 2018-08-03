@@ -1,4 +1,5 @@
 #include "appcontroller.h"
+#include <QDebug>
 
 void AppController::addElement(QString value) {
     m_myModel->addElement(value);
@@ -33,7 +34,15 @@ AppController::AppController(QObject *parent) : QObject(parent), m_myModel(new P
   //  m_list.append("test 1 gfdgdfg");
    // m_list.append("test 2 sdfsdgdfg");
    // m_list.append("/home/mike/testmg1.jpg");
+    if(m_myModel->rowCount() > 0)
+    {
     m_list=m_myModel->list();
+    }
+    else
+    {
+        qDebug() << "AppController: model is empty! Aborting.";
+        return;
+    }
   //  fsmodel->setRootPath(QDir::currentPath());
    // m_myModel->addElement("/home/mike/testmg1.jpg");
 }

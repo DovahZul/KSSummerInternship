@@ -25,6 +25,20 @@ QStringList PathViewModel::list()
 
 void PathViewModel::setFolderPath(QString path)
 {
+    if(!QDir(path).exists() )
+    {
+        qDebug()<<"PathViewModel: Directory not exists! Aborting.";
+        return;
+
+    }
+    if( QDir(path).entryList(QStringList() << "*.jpg" << "*.JPG"<<"*.png"<<"*.PNG"<<"*.jpeg"<<"*.JPEG",QDir::Files).count() <= 0 )
+    {
+        qDebug()<<"PathViewModel: Directory is empty! Aborting.";
+        return;
+
+    }
+
+
     folderPath = path;
     m_data.clear();
     QDir directory(folderPath);

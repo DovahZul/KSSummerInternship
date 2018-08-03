@@ -12,7 +12,7 @@ import QtQuick.Dialogs 1.2
 ApplicationWindow {
     id:mainWindow
     visible: true
-    width: 900
+    width: 640
     height: 480
     title: qsTr("Hello World")
 
@@ -55,13 +55,13 @@ property real globalPadding: 10
     {
         id: mainColumn
 
-        //anchors.fill: parent
+        anchors.fill: parent
 
 
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.right: fsBrowser.left
+       // anchors.left: parent.left
+       // anchors.top: parent.top
+       // anchors.bottom: parent.bottom
+       // anchors.right: fsBrowser.left
 
         height: parent.height/2
 
@@ -139,7 +139,7 @@ property real globalPadding: 10
                       path = path.replace(/^(file:\/{2})/,"");
                       // unescape html codes like '%23' for '#'
                       textFieldDirectory.text = path + "/" //decodeURIComponent(path);
-                      controller.setDirectory(textFieldDirectory.text)
+                      controller.setDirectoryPath(textFieldDirectory.text)
                       console.log(textFieldDirectory.text)
                       mainImage.source = "file://"+controller.itemAt(0)
 
@@ -154,7 +154,7 @@ property real globalPadding: 10
               //  anchors.margins: globalPadding
                 onClicked:
                 {
-                    controller.setDirectory(textFieldDirectory.text)
+                    controller.setDirectoryPath(textFieldDirectory.text)
                     console.log(textFieldDirectory.text)
                     mainImage.source = "file://"+controller.itemAt(0)
                    // scroller.model = controller.list
@@ -618,7 +618,7 @@ property real globalPadding: 10
     }
 
 
-
+/*
     DirBrowser {
         id: fsBrowser
         border.color: "black"
@@ -634,7 +634,7 @@ property real globalPadding: 10
 
     }
 
-
+*/
 
     ///END
    // }
